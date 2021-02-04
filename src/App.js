@@ -19,22 +19,20 @@ const App = () => {
   const [mergedImages, setMergedImages] = useState(null);
   const [name, setName] = useState('')
 
-  const imageRef = useRef();
   const canvasRef = useRef();
 
 
   useEffect(() => {
     if(uploadedImage && template)
-    resizeFile(uploadedImage).then( resizedImage => {    mergeImages([{src:resizedImage, x:43, y:43},template]).then(
-      b64 => {
-        imageRef.current.src = b64;
-        setMergedImages(b64);
-      }
-    )})
+    {
+      resizeFile(uploadedImage).then( resizedImage => {    mergeImages([{src:resizedImage, x:43, y:43},template]).then(
+        b64 => {
+  
+          setMergedImages(b64);
+        }
+      )})
+    }
     
-  }, [uploadedImage])
-
-  useEffect(() => {
     if(canvasRef.current && mergedImages)
     {
       const canvas = canvasRef.current;
@@ -51,13 +49,12 @@ const App = () => {
       console.log(imageObj.src)
 
     }
-  }, [mergedImages])
+  }, [uploadedImage,mergedImages])
 
   const imageHandler = (e) => {
     const reader = new FileReader();
     reader.onload = () => {
       if(reader.readyState === 2 ){
-        // setUploadedImage(reader.result);
         setUploadedImage(e.target.files[0]);
       }
     }
@@ -87,10 +84,11 @@ const App = () => {
 
   return (
     <div>
-      <input type='text' id='participant-name' value={name} onChange={(e)=>setName(e.target.value)} />
-      <img ref={imageRef} src={uploadedImage} style={{width:'500px'}} />
+      <input type='text' placeholder="Enter Participant's Name" id='participant-name' value={name} onChange={(e)=>setName(e.target.value)} />
+
       <input type='file'  name='uploaded-image' id='uploaded-image' accept="image/*" onChange={imageHandler}/>
-      <canvas ref={canvasRef} width={940} height={788} />
+
+      <canvas ref={canvasRef} width={940} height={788} style={{width:'400px', display:'block'}}/>
       <button onClick={downloadCanvasAsImage}>DOWNLOAD</button>
     </div>
   )
